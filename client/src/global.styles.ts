@@ -24,7 +24,9 @@ export const Form = styled.form`
 `;
 
 export const Main = styled.main`
-  min-height: 100vh;
+  min-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
 `;
 
 // Typography
@@ -63,6 +65,6 @@ export const Button = styled.button`
   }
 `;
 
-export const WelcomeHeading = styled(Heading.H1)`
+export const MainHeading = styled(Heading.H1)`
   text-align: center;
 `;
