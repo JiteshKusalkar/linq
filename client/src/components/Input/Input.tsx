@@ -1,13 +1,16 @@
 import { forwardRef } from "react";
-import { Field, Label, StyledInput } from "./styles";
+import { Error, Field, Label, Required, StyledInput } from "./styles";
 import { InputProps } from "./types";
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, id, ...rest }: InputProps) => {
+  ({ label, required, error, id, ...rest }, ref) => {
     return (
       <Field>
-        <Label id={id}>{label}</Label>
-        <StyledInput id={id} {...rest} />
+        <Label id={id}>
+          {label} {required && <Required />}
+        </Label>
+        <StyledInput ref={ref} id={id} required={required} {...rest} />
+        {error && <Error>{error}</Error>}
       </Field>
     );
   }

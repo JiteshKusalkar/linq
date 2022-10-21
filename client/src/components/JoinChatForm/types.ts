@@ -1,5 +1,8 @@
-import { Socket } from "socket.io-client";
-
 export type JoinChatFormProps = {
-  socket: Socket;
+  onJoinChat?: (name: string, room: string) => void;
+};
+
+export type JoinChatFormData = {
+  name: string;
+  room: string;
 };

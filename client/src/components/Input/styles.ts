@@ -27,3 +27,14 @@ export const Label = styled.label`
   line-height: 16px;
   margin-bottom: 4px;
 `;
+
+export const Required = styled.span`
+  content: '*';
+  color: #ff0000;
+`;
+
+export const Error = styled.span`
+  color: #ff0000;
+  font-size: 14px;
+  margin-top: 4px;
+`;

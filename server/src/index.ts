@@ -3,6 +3,8 @@ import express from "express";
 import http from "http";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
+import { SOCKET_ACTION } from "./constants";
+import { JoinChatRequest } from "./types";
 
 dotenv.config();
 
@@ -19,15 +21,15 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
+io.on(SOCKET_ACTION.CONNECTION, (socket) => {
   console.log("Connected to the socket: %s", socket.id);
 
-  socket.on("join", (user: string, room: string) => {
-    console.log('User %s joined %s', user, room);
+  socket.on(SOCKET_ACTION.JOIN_ROOM, ({ name, room }: JoinChatRequest) => {
+    console.log("User %s joined %s", name, room);
     socket.join(room);
   });
 
-  socket.on("disconnect", () => {
+  socket.on(SOCKET_ACTION.DISCONNECT, () => {
     console.log("Disconnected from the socket: %s", socket.id);
   });
 });
