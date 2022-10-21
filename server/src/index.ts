@@ -2,9 +2,9 @@ import cors from "cors";
 import express from "express";
 import http from "http";
 import dotenv from "dotenv";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { SOCKET_ACTION } from "./constants";
-import { JoinChatRequest } from "./types";
+import { JoinChatRequest, MessageRequest } from "./types";
 
 dotenv.config();
 
@@ -21,12 +21,17 @@ const io = new Server(server, {
   },
 });
 
-io.on(SOCKET_ACTION.CONNECTION, (socket) => {
+io.on(SOCKET_ACTION.CONNECTION, (socket: Socket) => {
   console.log("Connected to the socket: %s", socket.id);
 
   socket.on(SOCKET_ACTION.JOIN_ROOM, ({ name, room }: JoinChatRequest) => {
     console.log("User %s joined %s", name, room);
     socket.join(room);
+  });
+
+  socket.on(SOCKET_ACTION.SEND_MESSAGE, (message: MessageRequest) => {
+    console.log("Message '%s' sent by %s to %s room", message.text, message.author, message.room);
+    socket.to(message.room).emit(SOCKET_ACTION.RECEIVE_MESSAGE, message);
   });
 
   socket.on(SOCKET_ACTION.DISCONNECT, () => {

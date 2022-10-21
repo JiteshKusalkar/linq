@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { buildBgColorLookupByOwner, buildColorLookupByOwner } from "./messageLookup";
 import { MessageText, TimeStamp, Wrapper } from "./styles";
 import { DisplayMessageProps, MessageOwner } from "./types";
@@ -24,4 +25,4 @@ function DisplayMessage({ message, own }: DisplayMessageProps) {
   );
 }
 
-export default DisplayMessage;
+export default memo(DisplayMessage);
