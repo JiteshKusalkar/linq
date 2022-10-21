@@ -1,14 +1,19 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import Editor from "../Editor";
 import DisplayMessage from "../DisplayMessage";
 import { SOCKET_ACTION } from "../../utils/socketActions";
 import { MessageFormData } from "../Editor/types";
 import { Message, MessageType } from "../DisplayMessage/types";
+import { JoinChatFormData } from "../JoinChatForm/types";
 import { ChatWindowProps } from "./types";
 import { ChatBody, ChatFooter, ChatHeader, Wrapper } from "./styles";
+import useMessageTransfer from "./useMessageTransfer";
+import useReceiveUserJoined from "./useReceiveUserJoined";
+import useSendUserJoined from "./useSendUserJoined";
 
 function ChatWindow({ name, room, socket }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [joinedUser, setJoinedUser] = useState("");
 
   const handleChange = async ({ message }: MessageFormData) => {
     const newMessage: Message = {
@@ -23,23 +28,36 @@ function ChatWindow({ name, room, socket }: ChatWindowProps) {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
-  useEffect(() => {
-    // source: https://github.com/facebook/react/issues/24502#issuecomment-1118867879
-    let ignore = false;
-    socket.on(SOCKET_ACTION.RECEIVE_MESSAGE, (receivedMessage: Message) => {
-      if (!ignore) {
-        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-      }
-    });
+  const onMessageTransferSuccess = useCallback((receivedMessage: Message) => {
+    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+  }, []);
 
-    return () => {
-      ignore = true;
-    };
-  }, [socket]);
+  const onReceiveUserJoinedSuccess = useCallback(
+    ({ name: joinedUserName, room }: JoinChatFormData) => {
+      if (joinedUserName !== name) {
+        setJoinedUser(joinedUserName);
+        socket.emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, room });
+      }
+    },
+    [name, socket]
+  );
+
+  const onSendUserJoinedSuccess = useCallback(
+    ({ name: joinedUserName, room }: JoinChatFormData) => {
+      if (joinedUserName !== name) {
+        setJoinedUser(joinedUserName);
+      }
+    },
+    [name]
+  );
+
+  useMessageTransfer(socket, onMessageTransferSuccess);
+  useReceiveUserJoined(socket, onReceiveUserJoinedSuccess);
+  useSendUserJoined(socket, onSendUserJoinedSuccess);
 
   return (
     <Wrapper>
-      <ChatHeader>{name}</ChatHeader>
+      <ChatHeader>{joinedUser || "No user joined"}</ChatHeader>
       <ChatBody>
         {messages.map((message) => (
           <DisplayMessage

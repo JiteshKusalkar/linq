@@ -18,7 +18,11 @@ function Chat() {
     setName(name);
     setRoom(room);
 
+    // join room
     socket.emit(SOCKET_ACTION.JOIN_ROOM, { name, room });
+    // let other user know you have joined
+    socket.emit(SOCKET_ACTION.SEND_USER_JOINED, { name, room });
+
     setHasJoinedChat(true);
   };
 
