@@ -6,14 +6,14 @@ const messageBgLookup: MessageLookup = {
     [MessageType.HIGHLIGHT]: "",
     [MessageType.REGULAR]: "#92d242",
     [MessageType.NICK]: "#92d242",
-    [MessageType.THINK]: "",
+    [MessageType.THINK]: "#92d242",
   },
   [MessageOwner.OTHER]: {
     [MessageType.FADED]: "",
     [MessageType.HIGHLIGHT]: "",
     [MessageType.REGULAR]: "#e5e5e5",
     [MessageType.NICK]: "#e5e5e5",
-    [MessageType.THINK]: "",
+    [MessageType.THINK]: "#e5e5e5",
   },
 };
 
@@ -23,14 +23,14 @@ const messageLookup: MessageLookup = {
     [MessageType.HIGHLIGHT]: "",
     [MessageType.REGULAR]: "#000000",
     [MessageType.NICK]: "#000000",
-    [MessageType.THINK]: "",
+    [MessageType.THINK]: "#666666",
   },
   [MessageOwner.OTHER]: {
     [MessageType.FADED]: "",
     [MessageType.HIGHLIGHT]: "",
     [MessageType.REGULAR]: "#000000",
     [MessageType.NICK]: "#000000",
-    [MessageType.THINK]: "",
+    [MessageType.THINK]: "#666666",
   },
 };
 

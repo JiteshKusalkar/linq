@@ -38,7 +38,7 @@ function ChatWindow({ socket }: ChatWindowProps) {
 
     // allow only when a non empty text is available
     if (transformedMessage.text) {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessages((prevMessages) => [...prevMessages, transformedMessage]);
     }
   };
 
@@ -79,7 +79,7 @@ function ChatWindow({ socket }: ChatWindowProps) {
 
   return (
     <Wrapper>
-      <ChatHeader>{joinedUsername || "No user joined"}</ChatHeader>
+      <ChatHeader>{`You are talking to ${joinedUsername}` || "No user joined"}</ChatHeader>
       <ChatBody>
         {messages.map((message) => (
           <DisplayMessage
