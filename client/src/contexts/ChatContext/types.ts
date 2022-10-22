@@ -1,9 +1,11 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
+import { Message } from "../../components/DisplayMessage/types";
 
 export type ChatState = {
   name: string;
   room: string;
   joinedUsername: string;
+  messages: Message[];
 };
 
 export type SetChatState = Dispatch<SetStateAction<ChatState>>;

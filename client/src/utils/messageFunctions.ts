@@ -8,6 +8,10 @@ function hasThink(messageText: string) {
   return messageText.match("/think")?.index === 0;
 }
 
+function hasOops(messageText: string) {
+  return messageText.match("/oops")?.index === 0;
+}
+
 function buildMessageExtractor(command: string) {
   function extractMessage(messageText: string) {
     return messageText.replace(command, "").trim();
@@ -16,7 +20,7 @@ function buildMessageExtractor(command: string) {
   return extractMessage;
 }
 
-const messageInterpreter = (message: Message): Message => {
+export const messageInterpreter = (message: Message): Message => {
   if (hasNick(message.text)) {
     const extractAuthor = buildMessageExtractor("/nick");
 
@@ -35,10 +39,26 @@ const messageInterpreter = (message: Message): Message => {
       ...message,
       text: extractMessage(message.text),
       type: MessageType.THINK,
-    }
+    };
+  }
+
+  if (hasOops(message.text)) {
+    const extractMessage = buildMessageExtractor("/oops");
+
+    return {
+      ...message,
+      text: extractMessage(message.text),
+      type: MessageType.OOPS,
+    };
   }
 
   return message;
 };
 
-export default messageInterpreter;
+export const getMessageType = (message: string): MessageType => {
+  if (hasOops(message)) {
+    return MessageType.OOPS;
+  }
+
+  return MessageType.REGULAR;
+};

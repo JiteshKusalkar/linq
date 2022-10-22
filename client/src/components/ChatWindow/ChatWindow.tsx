@@ -1,9 +1,9 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 import Editor from "../Editor";
 import DisplayMessage from "../DisplayMessage";
 import { SOCKET_ACTION } from "../../utils/socketActions";
 import { MessageFormData } from "../Editor/types";
-import { Message, MessageType } from "../DisplayMessage/types";
+import { Message } from "../DisplayMessage/types";
 import { JoinChatFormData } from "../JoinChatForm/types";
 import { ChatWindowProps } from "./types";
 import { ChatBody, ChatFooter, ChatHeader, Wrapper } from "./styles";
@@ -11,13 +11,12 @@ import useMessageTransfer from "./useMessageTransfer";
 import useReceiveUserJoined from "./useReceiveUserJoined";
 import useSendUserJoined from "./useSendUserJoined";
 import { useChatContext } from "../../contexts/ChatContext";
-import messageInterpreter from "../../utils/messageInterpreter";
+import { getMessageType, messageInterpreter } from "../../utils/messageFunctions";
 import useMessageFunctions from "./useMessageFunctions";
 
 function ChatWindow({ socket }: ChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
   const {
-    chatState: { name, room, joinedUsername },
+    chatState: { name, room, joinedUsername, messages },
     setChatState,
   } = useChatContext();
   const operateByMessageType = useMessageFunctions();
@@ -28,30 +27,37 @@ function ChatWindow({ socket }: ChatWindowProps) {
       createdAt: Date.now(),
       room,
       text: message,
-      type: MessageType.REGULAR,
+      type: getMessageType(message),
     };
 
     await socket.emit(SOCKET_ACTION.SEND_MESSAGE, newMessage);
 
     // set text to empty text for special message types
     const transformedMessage = messageInterpreter(newMessage);
+    operateByMessageType(transformedMessage);
 
     // allow only when a non empty text is available
     if (transformedMessage.text) {
-      setMessages((prevMessages) => [...prevMessages, transformedMessage]);
+      setChatState((prevMessages) => ({
+        ...prevMessages,
+        messages: [...prevMessages.messages, transformedMessage],
+      }));
     }
   };
 
   const onMessageReceiveSuccess = useCallback(
     (receivedMessage: Message) => {
       const newMessage = messageInterpreter(receivedMessage);
-      operateByMessageType(newMessage);
+      operateByMessageType(newMessage, true);
 
       if (newMessage.text) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setChatState((prevMessages) => ({
+          ...prevMessages,
+          messages: [...prevMessages.messages, newMessage],
+        }));
       }
     },
-    [operateByMessageType]
+    [operateByMessageType, setChatState]
   );
 
   const onReceiveUserJoinedSuccess = useCallback(
@@ -79,7 +85,11 @@ function ChatWindow({ socket }: ChatWindowProps) {
 
   return (
     <Wrapper>
-      <ChatHeader>{`You are talking to ${joinedUsername}` || "No user joined"}</ChatHeader>
+      <ChatHeader>
+        {joinedUsername
+          ? `You are talking to ${joinedUsername}`
+          : "No user joined"}
+      </ChatHeader>
       <ChatBody>
         {messages.map((message) => (
           <DisplayMessage

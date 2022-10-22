@@ -6,6 +6,7 @@ const initialChatState = {
   name: "",
   room: "",
   joinedUsername: "",
+  messages: [],
 };
 
 const ChatStateContext = createContext<ChatContext>([

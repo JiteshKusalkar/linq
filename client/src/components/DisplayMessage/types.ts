@@ -4,6 +4,7 @@ export enum MessageType {
   HIGHLIGHT = "highlight",
   THINK = "think",
   NICK = "nick",
+  OOPS = "oops",
 }
 
 export enum MessageOwner {
