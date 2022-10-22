@@ -26,7 +26,7 @@ function DisplayMessage({ message, own }: DisplayMessageProps) {
     >
       <MessageText>{message.text}</MessageText>
       <TimeStamp>
-        {format(new Date(message.createdAt), "dd/mmm/yyyy hh:ss a")}
+        {format(new Date(message.createdAt), "dd LLL yyyy hh:ss a")}
       </TimeStamp>
     </Wrapper>
   );

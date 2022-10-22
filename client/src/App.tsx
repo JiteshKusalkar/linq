@@ -1,3 +1,4 @@
+import { ChatStateProvider } from "./contexts/ChatContext";
 import Chat from "./features/chat";
 import { GlobalStyles, Main, MainHeading } from "./global.styles";
 
@@ -6,7 +7,9 @@ function App() {
     <Main>
       <GlobalStyles />
       <MainHeading>Welcome to LinQ!</MainHeading>
-      <Chat />
+      <ChatStateProvider>
+        <Chat />
+      </ChatStateProvider>
     </Main>
   );
 }
