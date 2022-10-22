@@ -3,6 +3,7 @@ export enum MessageType {
   FADED = "faded",
   HIGHLIGHT = "highlight",
   THINK = "think",
+  NICK = "nick",
 }
 
 export enum MessageOwner {

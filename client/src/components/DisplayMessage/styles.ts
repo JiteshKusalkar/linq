@@ -12,7 +12,7 @@ export const Wrapper = styled.div`
 `;
 
 export const MessageText = styled(Text)`
-  margin: 0;
+  margin: 5px 0;
 `;
 
 export const TimeStamp = styled(Text)`
