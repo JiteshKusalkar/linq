@@ -10,7 +10,7 @@ const socket = connect(url);
 
 function Chat() {
   const [hasJoinedChat, setHasJoinedChat] = useState(false);
-  const { chatState, setChatState } = useChatContext();
+  const { setChatState } = useChatContext();
 
   const memoisedSocket = useMemo(() => socket, []);
 
@@ -26,11 +26,7 @@ function Chat() {
   };
 
   return hasJoinedChat ? (
-    <ChatWindow
-      name={chatState.name}
-      room={chatState.room}
-      socket={memoisedSocket}
-    />
+    <ChatWindow socket={memoisedSocket} />
   ) : (
     <JoinChatForm onJoinChat={handleJoinChat} />
   );

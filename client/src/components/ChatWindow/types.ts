@@ -3,8 +3,6 @@ import { Message } from "../DisplayMessage/types";
 import { JoinChatFormData } from "../JoinChatForm/types";
 
 export type ChatWindowProps = {
-  name: string;
-  room: string;
   socket: Socket;
 };
 

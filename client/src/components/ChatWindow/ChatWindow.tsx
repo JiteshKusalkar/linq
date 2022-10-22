@@ -10,10 +10,12 @@ import { ChatBody, ChatFooter, ChatHeader, Wrapper } from "./styles";
 import useMessageTransfer from "./useMessageTransfer";
 import useReceiveUserJoined from "./useReceiveUserJoined";
 import useSendUserJoined from "./useSendUserJoined";
+import { useChatContext } from "../../contexts/ChatContext";
 
-function ChatWindow({ name, room, socket }: ChatWindowProps) {
+function ChatWindow({ socket }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [joinedUser, setJoinedUser] = useState("");
+  const { chatState: { name, room } } = useChatContext();
 
   const handleChange = async ({ message }: MessageFormData) => {
     const newMessage: Message = {
@@ -28,7 +30,7 @@ function ChatWindow({ name, room, socket }: ChatWindowProps) {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
-  const onMessageTransferSuccess = useCallback((receivedMessage: Message) => {
+  const onMessageReceiveSuccess = useCallback((receivedMessage: Message) => {
     setMessages((prevMessages) => [...prevMessages, receivedMessage]);
   }, []);
 
@@ -43,7 +45,7 @@ function ChatWindow({ name, room, socket }: ChatWindowProps) {
   );
 
   const onSendUserJoinedSuccess = useCallback(
-    ({ name: joinedUserName, room }: JoinChatFormData) => {
+    ({ name: joinedUserName }: JoinChatFormData) => {
       if (joinedUserName !== name) {
         setJoinedUser(joinedUserName);
       }
@@ -51,7 +53,7 @@ function ChatWindow({ name, room, socket }: ChatWindowProps) {
     [name]
   );
 
-  useMessageTransfer(socket, onMessageTransferSuccess);
+  useMessageTransfer(socket, onMessageReceiveSuccess);
   useReceiveUserJoined(socket, onReceiveUserJoinedSuccess);
   useSendUserJoined(socket, onSendUserJoinedSuccess);
 
