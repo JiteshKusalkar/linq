@@ -3,6 +3,7 @@ import { Dispatch, ReactNode, SetStateAction } from "react";
 export type ChatState = {
   name: string;
   room: string;
+  joinedUsername: string;
 };
 
 export type SetChatState = Dispatch<SetStateAction<ChatState>>;

@@ -11,11 +11,16 @@ import useMessageTransfer from "./useMessageTransfer";
 import useReceiveUserJoined from "./useReceiveUserJoined";
 import useSendUserJoined from "./useSendUserJoined";
 import { useChatContext } from "../../contexts/ChatContext";
+import messageInterpreter from "../../utils/messageInterpreter";
+import useMessageFunctions from "./useMessageFunctions";
 
 function ChatWindow({ socket }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [joinedUser, setJoinedUser] = useState("");
-  const { chatState: { name, room } } = useChatContext();
+  const {
+    chatState: { name, room, joinedUsername },
+    setChatState,
+  } = useChatContext();
+  const operateByMessageType = useMessageFunctions();
 
   const handleChange = async ({ message }: MessageFormData) => {
     const newMessage: Message = {
@@ -27,30 +32,45 @@ function ChatWindow({ socket }: ChatWindowProps) {
     };
 
     await socket.emit(SOCKET_ACTION.SEND_MESSAGE, newMessage);
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    // set text to empty text for special message types
+    const transformedMessage = messageInterpreter(newMessage);
+
+    // allow only when a non empty text is available
+    if (transformedMessage.text) {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    }
   };
 
-  const onMessageReceiveSuccess = useCallback((receivedMessage: Message) => {
-    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-  }, []);
+  const onMessageReceiveSuccess = useCallback(
+    (receivedMessage: Message) => {
+      const newMessage = messageInterpreter(receivedMessage);
+      operateByMessageType(newMessage);
+
+      if (newMessage.text) {
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
+    },
+    [operateByMessageType]
+  );
 
   const onReceiveUserJoinedSuccess = useCallback(
-    ({ name: joinedUserName, room }: JoinChatFormData) => {
-      if (joinedUserName !== name) {
-        setJoinedUser(joinedUserName);
+    ({ name: joinedUsername, room }: JoinChatFormData) => {
+      if (joinedUsername !== name) {
+        setChatState((prevState) => ({ ...prevState, joinedUsername }));
         socket.emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, room });
       }
     },
-    [name, socket]
+    [name, socket, setChatState]
   );
 
   const onSendUserJoinedSuccess = useCallback(
-    ({ name: joinedUserName }: JoinChatFormData) => {
-      if (joinedUserName !== name) {
-        setJoinedUser(joinedUserName);
+    ({ name: joinedUsername }: JoinChatFormData) => {
+      if (joinedUsername !== name) {
+        setChatState((prevState) => ({ ...prevState, joinedUsername }));
       }
     },
-    [name]
+    [name, setChatState]
   );
 
   useMessageTransfer(socket, onMessageReceiveSuccess);
@@ -59,7 +79,7 @@ function ChatWindow({ socket }: ChatWindowProps) {
 
   return (
     <Wrapper>
-      <ChatHeader>{joinedUser || "No user joined"}</ChatHeader>
+      <ChatHeader>{joinedUsername || "No user joined"}</ChatHeader>
       <ChatBody>
         {messages.map((message) => (
           <DisplayMessage

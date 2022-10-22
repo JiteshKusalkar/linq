@@ -5,6 +5,7 @@ import { ChatContext, ChatStateProviderProps, ChatState } from "./types";
 const initialChatState = {
   name: "",
   room: "",
+  joinedUsername: "",
 };
 
 const ChatStateContext = createContext<ChatContext>([
