@@ -1,27 +1,41 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
+import debounce from "lodash.debounce";
+import throttle from "lodash.throttle";
 import Editor from "../Editor";
 import DisplayMessage from "../DisplayMessage";
 import { SOCKET_ACTION } from "../../utils/socketActions";
 import { MessageFormData } from "../Editor/types";
 import { Message } from "../DisplayMessage/types";
 import { JoinChatFormData } from "../JoinChatForm/types";
-import { ChatWindowProps } from "./types";
-import { ChatBody, ChatFooter, ChatHeader, Wrapper } from "./styles";
+import { ChatWindowProps, UserTypingProps } from "./types";
+import { ChatBody, ChatFooter, ChatHeader, UserTypingTextStyled, Wrapper } from "./styles";
 import useMessageTransfer from "./useMessageTransfer";
 import useReceiveUserJoined from "./useReceiveUserJoined";
 import useSendUserJoined from "./useSendUserJoined";
 import { useChatContext } from "../../contexts/ChatContext";
-import { getMessageType, messageInterpreter } from "../../utils/messageFunctions";
+import {
+  getMessageType,
+  messageInterpreter,
+} from "../../utils/messageFunctions";
 import useMessageFunctions from "./useMessageFunctions";
+import useUserTyping from "./useUserTyping";
 
 function ChatWindow({ socket }: ChatWindowProps) {
   const {
     chatState: { name, room, joinedUsername, messages },
     setChatState,
   } = useChatContext();
+  const [isTyping, setIsTyping] = useState(false);
   const operateByMessageType = useMessageFunctions();
 
-  const handleChange = async ({ message }: MessageFormData) => {
+  const emitStoppedTyping = debounce(() => {
+    socket.emit(SOCKET_ACTION.USER_TYPING, { name, room, isTyping: false });
+  }, 450);
+  const emitStartTyping = throttle(() => {
+    socket.emit(SOCKET_ACTION.USER_TYPING, { name, room, isTyping: true });
+  }, 450);
+
+  const handleSend = async ({ message }: MessageFormData) => {
     const newMessage: Message = {
       author: name,
       createdAt: Date.now(),
@@ -30,7 +44,7 @@ function ChatWindow({ socket }: ChatWindowProps) {
       type: getMessageType(message),
     };
 
-    await socket.emit(SOCKET_ACTION.SEND_MESSAGE, newMessage);
+    socket.emit(SOCKET_ACTION.SEND_MESSAGE, newMessage);
 
     // set text to empty text for special message types
     const transformedMessage = messageInterpreter(newMessage);
@@ -43,6 +57,11 @@ function ChatWindow({ socket }: ChatWindowProps) {
         messages: [...prevMessages.messages, transformedMessage],
       }));
     }
+  };
+
+  const handleChange = () => {
+    emitStartTyping();
+    emitStoppedTyping();
   };
 
   const onMessageReceiveSuccess = useCallback(
@@ -79,9 +98,17 @@ function ChatWindow({ socket }: ChatWindowProps) {
     [name, setChatState]
   );
 
+  const onUserTypingSuccessHandler = useCallback(
+    ({ isTyping }: UserTypingProps) => {
+      setIsTyping(isTyping);
+    },
+    []
+  );
+
   useMessageTransfer(socket, onMessageReceiveSuccess);
   useReceiveUserJoined(socket, onReceiveUserJoinedSuccess);
   useSendUserJoined(socket, onSendUserJoinedSuccess);
+  useUserTyping(socket, onUserTypingSuccessHandler);
 
   return (
     <Wrapper>
@@ -100,7 +127,8 @@ function ChatWindow({ socket }: ChatWindowProps) {
         ))}
       </ChatBody>
       <ChatFooter>
-        <Editor onMessageSend={handleChange} />
+        {isTyping && <UserTypingTextStyled>Typing...</UserTypingTextStyled>}
+        <Editor onMessageSend={handleSend} onChange={handleChange} />
       </ChatFooter>
     </Wrapper>
   );

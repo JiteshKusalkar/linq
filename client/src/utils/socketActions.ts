@@ -4,4 +4,5 @@ export const SOCKET_ACTION = {
   RECEIVE_MESSAGE: "receive_message",
   SEND_USER_JOINED: "send_user_joined",
   RECEIVE_USER_JOINED: "receive_user_joined",
+  USER_TYPING: "user_typing",
 };

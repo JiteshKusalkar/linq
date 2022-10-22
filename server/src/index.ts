@@ -30,17 +30,32 @@ io.on(SOCKET_ACTION.CONNECTION, (socket: Socket) => {
   });
 
   // to listen to second user joined
-  socket.on(SOCKET_ACTION.SEND_USER_JOINED, ({ name, room }: JoinChatRequest) => {
-    socket.to(room).emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, room });
-  });
+  socket.on(
+    SOCKET_ACTION.SEND_USER_JOINED,
+    ({ name, room }: JoinChatRequest) => {
+      socket.to(room).emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, room });
+    }
+  );
 
   // to send the first user's name to second user
-  socket.on(SOCKET_ACTION.RECEIVE_USER_JOINED, ({ name, room }: JoinChatRequest) => {
-    socket.to(room).emit(SOCKET_ACTION.SEND_USER_JOINED, { name, room });
+  socket.on(
+    SOCKET_ACTION.RECEIVE_USER_JOINED,
+    ({ name, room }: JoinChatRequest) => {
+      socket.to(room).emit(SOCKET_ACTION.SEND_USER_JOINED, { name, room });
+    }
+  );
+
+  socket.on(SOCKET_ACTION.USER_TYPING, ({ name, room, isTyping }) => {
+    socket.to(room).emit(SOCKET_ACTION.USER_TYPING, { name, room, isTyping });
   });
 
   socket.on(SOCKET_ACTION.SEND_MESSAGE, (message: MessageRequest) => {
-    console.log("Message '%s' sent by %s to %s room", message.text, message.author, message.room);
+    console.log(
+      "Message '%s' sent by %s to %s room",
+      message.text,
+      message.author,
+      message.room
+    );
     socket.to(message.room).emit(SOCKET_ACTION.RECEIVE_MESSAGE, message);
   });
 

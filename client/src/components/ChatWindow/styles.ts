@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Text } from "../../global.styles";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -23,5 +24,10 @@ export const ChatBody = styled.div`
 `;
 export const ChatFooter = styled.footer`
   background-color: #ffffff;
-  border-top: 1px solid #aaaaaa;
+`;
+export const UserTypingTextStyled = styled(Text)`
+  margin: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #008062;
 `;
