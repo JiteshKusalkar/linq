@@ -8,7 +8,14 @@ import { MessageFormData } from "../Editor/types";
 import { Message } from "../DisplayMessage/types";
 import { JoinChatFormData } from "../JoinChatForm/types";
 import { ChatWindowProps, UserTypingProps } from "./types";
-import { ChatBody, ChatFooter, ChatHeader, UserTypingTextStyled, Wrapper } from "./styles";
+import {
+  ChatBody,
+  ChatFooter,
+  ChatHeader,
+  JoinedUserInfo,
+  UserTypingTextStyled,
+  Wrapper,
+} from "./styles";
 import useMessageTransfer from "./useMessageTransfer";
 import useReceiveUserJoined from "./useReceiveUserJoined";
 import useSendUserJoined from "./useSendUserJoined";
@@ -19,6 +26,7 @@ import {
 } from "../../utils/messageFunctions";
 import useMessageFunctions from "./useMessageFunctions";
 import useUserTyping from "./useUserTyping";
+import useChatWindowScroll from "./useChatWindowScroll";
 
 function ChatWindow({ socket }: ChatWindowProps) {
   const {
@@ -109,15 +117,19 @@ function ChatWindow({ socket }: ChatWindowProps) {
   useReceiveUserJoined(socket, onReceiveUserJoinedSuccess);
   useSendUserJoined(socket, onSendUserJoinedSuccess);
   useUserTyping(socket, onUserTypingSuccessHandler);
+  const ref = useChatWindowScroll(messages);
 
   return (
     <Wrapper>
       <ChatHeader>
-        {joinedUsername
-          ? `You are talking to ${joinedUsername}`
-          : "No user joined"}
+        <JoinedUserInfo>
+          {joinedUsername
+            ? `You are talking to ${joinedUsername}`
+            : "No user joined"}
+        </JoinedUserInfo>
+        {isTyping && <UserTypingTextStyled>(Typing...)</UserTypingTextStyled>}
       </ChatHeader>
-      <ChatBody>
+      <ChatBody ref={ref}>
         {messages.map((message) => (
           <DisplayMessage
             message={message}
@@ -127,7 +139,6 @@ function ChatWindow({ socket }: ChatWindowProps) {
         ))}
       </ChatBody>
       <ChatFooter>
-        {isTyping && <UserTypingTextStyled>Typing...</UserTypingTextStyled>}
         <Editor onMessageSend={handleSend} onChange={handleChange} />
       </ChatFooter>
     </Wrapper>

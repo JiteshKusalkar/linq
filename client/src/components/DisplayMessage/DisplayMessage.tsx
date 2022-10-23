@@ -22,6 +22,9 @@ function DisplayMessage({ message, own }: DisplayMessageProps) {
         backgroundColor: getBgColorByType(message.type),
         alignSelf: own ? "flex-end" : "flex-start",
         textAlign: own ? "right" : "left",
+        animation: own
+          ? "slideInFromRight 0.3s ease-in-out"
+          : "slideInFromLeft 0.3s ease-in-out",
       }}
     >
       <MessageText>{message.text}</MessageText>

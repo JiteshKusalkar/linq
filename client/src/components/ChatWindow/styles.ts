@@ -13,7 +13,9 @@ export const ChatHeader = styled.header`
   padding: 20px;
   background-color: #4338ca;
   color: #ffffff;
+  display: flex;
 `;
+export const JoinedUserInfo = styled.div``;
 export const ChatBody = styled.div`
   padding: 20px;
   display: flex;
@@ -26,8 +28,5 @@ export const ChatFooter = styled.footer`
   background-color: #ffffff;
 `;
 export const UserTypingTextStyled = styled(Text)`
-  margin: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #008062;
+  margin: 0 5px;
 `;
