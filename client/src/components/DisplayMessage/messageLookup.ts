@@ -8,6 +8,7 @@ const messageBgLookup: MessageLookup = {
     [MessageType.NICK]: "#92d242",
     [MessageType.THINK]: "#92d242",
     [MessageType.OOPS]: "#92d242",
+    [MessageType.COUNTDOWN]: "#92d242",
   },
   [MessageOwner.OTHER]: {
     [MessageType.FADED]: "",
@@ -16,6 +17,7 @@ const messageBgLookup: MessageLookup = {
     [MessageType.NICK]: "#e5e5e5",
     [MessageType.THINK]: "#e5e5e5",
     [MessageType.OOPS]: "#e5e5e5",
+    [MessageType.COUNTDOWN]: "#e5e5e5",
   },
 };
 
@@ -27,6 +29,7 @@ const messageLookup: MessageLookup = {
     [MessageType.NICK]: "#000000",
     [MessageType.THINK]: "#666666",
     [MessageType.OOPS]: "#000000",
+    [MessageType.COUNTDOWN]: "#000000",
   },
   [MessageOwner.OTHER]: {
     [MessageType.FADED]: "",
@@ -35,6 +38,7 @@ const messageLookup: MessageLookup = {
     [MessageType.NICK]: "#000000",
     [MessageType.THINK]: "#666666",
     [MessageType.OOPS]: "#000000",
+    [MessageType.COUNTDOWN]: "#000000",
   },
 };
 

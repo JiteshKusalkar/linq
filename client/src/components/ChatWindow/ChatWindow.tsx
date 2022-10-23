@@ -113,11 +113,12 @@ function ChatWindow({ socket }: ChatWindowProps) {
     []
   );
 
+  const ref = useChatWindowScroll(messages);
+
   useMessageTransfer(socket, onMessageReceiveSuccess);
   useReceiveUserJoined(socket, onReceiveUserJoinedSuccess);
   useSendUserJoined(socket, onSendUserJoinedSuccess);
   useUserTyping(socket, onUserTypingSuccessHandler);
-  const ref = useChatWindowScroll(messages);
 
   return (
     <Wrapper>

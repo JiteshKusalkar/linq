@@ -5,6 +5,7 @@ export enum MessageType {
   THINK = "think",
   NICK = "nick",
   OOPS = "oops",
+  COUNTDOWN = "countdown",
 }
 
 export enum MessageOwner {
@@ -18,6 +19,7 @@ export type Message = {
   createdAt: number;
   room: string;
   type: MessageType;
+  meta?: Record<string, string | number>;
 };
 
 export type DisplayMessageProps = {

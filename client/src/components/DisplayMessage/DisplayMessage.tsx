@@ -1,11 +1,12 @@
 import format from "date-fns/format";
 import { memo } from "react";
+import CountdownMessage from "../CountdownMessage";
 import {
   buildBgColorLookupByOwner,
   buildColorLookupByOwner,
 } from "./messageLookup";
 import { MessageText, TimeStamp, Wrapper } from "./styles";
-import { DisplayMessageProps, MessageOwner } from "./types";
+import { DisplayMessageProps, MessageOwner, MessageType } from "./types";
 
 function DisplayMessage({ message, own }: DisplayMessageProps) {
   const getColorByType = buildColorLookupByOwner(
@@ -27,7 +28,11 @@ function DisplayMessage({ message, own }: DisplayMessageProps) {
           : "slideInFromLeft 0.3s ease-in-out",
       }}
     >
-      <MessageText>{message.text}</MessageText>
+      {message.type === MessageType.COUNTDOWN && message.meta ? (
+        <CountdownMessage message={message} own={own} />
+      ) : (
+        <MessageText>{message.text}</MessageText>
+      )}
       <TimeStamp>
         {format(new Date(message.createdAt), "dd LLL yyyy hh:ss a")}
       </TimeStamp>
