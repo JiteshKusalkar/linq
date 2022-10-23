@@ -6,7 +6,9 @@ import { CountdownMessageProps } from "./types";
 function CountdownMessage({ message, own }: CountdownMessageProps) {
   const handleCountdownComplete = useCallback(() => {
     if (message.meta) {
-      window.open(String(message.meta.url), "_blank");
+      const features =
+        "height=570,width=520,scrollbars=yes,status=yes";
+      window.open(String(message.meta.url), "_blank", features);
     }
   }, [message.meta]);
 
@@ -17,7 +19,15 @@ function CountdownMessage({ message, own }: CountdownMessageProps) {
   return (
     <Wrapper>
       <MessageText>
-        You will be redirected to {message.meta?.url} in:
+        You will be redirected to{" "}
+        <a
+          href={message.meta?.url as string}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          url
+        </a>{" "}
+        in:
       </MessageText>
       {message.meta && (
         <Countdown
