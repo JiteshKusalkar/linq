@@ -32,16 +32,16 @@ io.on(SOCKET_ACTION.CONNECTION, (socket: Socket) => {
   // to listen to second user joined
   socket.on(
     SOCKET_ACTION.SEND_USER_JOINED,
-    ({ name, room }: JoinChatRequest) => {
-      socket.to(room).emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, room });
+    ({ name, id, room }: JoinChatRequest) => {
+      socket.to(room).emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, id, room });
     }
   );
 
   // to send the first user's name to second user
   socket.on(
     SOCKET_ACTION.RECEIVE_USER_JOINED,
-    ({ name, room }: JoinChatRequest) => {
-      socket.to(room).emit(SOCKET_ACTION.SEND_USER_JOINED, { name, room });
+    ({ name, id, room }: JoinChatRequest) => {
+      socket.to(room).emit(SOCKET_ACTION.SEND_USER_JOINED, { name, id, room });
     }
   );
 

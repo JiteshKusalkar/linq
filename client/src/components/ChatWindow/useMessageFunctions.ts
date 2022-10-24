@@ -4,7 +4,7 @@ import { Message, MessageType } from "../DisplayMessage/types";
 
 function useMessageFunctions() {
   const {
-    chatState: { name, joinedUsername },
+    chatState: { id, joinedUserId, joinedUsername },
     setChatState,
   } = useChatContext();
 
@@ -28,7 +28,7 @@ function useMessageFunctions() {
               (acc: Message[], message) => {
                 if (
                   !ignore &&
-                  message.author === (hasReceived ? joinedUsername : name)
+                  message.authorId === (hasReceived ? joinedUserId : id)
                 ) {
                   ignore = true;
                   return acc;
@@ -45,7 +45,7 @@ function useMessageFunctions() {
           break;
       }
     },
-    [joinedUsername, name, setChatState]
+    [id, joinedUserId, joinedUsername, setChatState]
   );
 
   return operateByMessageType;

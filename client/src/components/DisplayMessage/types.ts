@@ -14,10 +14,13 @@ export enum MessageOwner {
 }
 
 export type Message = {
+  id: string;
   text: string;
   author: string;
+  authorId: string;
   createdAt: number;
   room: string;
+  roomId: string;
   type: MessageType;
   meta?: Record<string, string | number>;
 };

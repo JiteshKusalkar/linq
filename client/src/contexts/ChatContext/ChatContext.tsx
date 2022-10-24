@@ -4,8 +4,11 @@ import { ChatContext, ChatStateProviderProps, ChatState } from "./types";
 
 const initialChatState = {
   name: "",
+  id: "",
   room: "",
+  roomId: "",
   joinedUsername: "",
+  joinedUserId: "",
   messages: [],
 };
 

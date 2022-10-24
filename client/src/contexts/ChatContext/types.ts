@@ -3,8 +3,11 @@ import { Message } from "../../components/DisplayMessage/types";
 
 export type ChatState = {
   name: string;
+  id: string;
   room: string;
+  roomId: string;
   joinedUsername: string;
+  joinedUserId: string;
   messages: Message[];
 };
 

@@ -6,8 +6,7 @@ import DisplayMessage from "../DisplayMessage";
 import { SOCKET_ACTION } from "../../utils/socketActions";
 import { MessageFormData } from "../Editor/types";
 import { Message } from "../DisplayMessage/types";
-import { JoinChatFormData } from "../JoinChatForm/types";
-import { ChatWindowProps, UserTypingProps } from "./types";
+import { ChatWindowProps, JoinChatResponse, UserTypingProps } from "./types";
 import {
   ChatBody,
   ChatFooter,
@@ -27,10 +26,11 @@ import {
 import useMessageFunctions from "./useMessageFunctions";
 import useUserTyping from "./useUserTyping";
 import useChatWindowScroll from "./useChatWindowScroll";
+import generateID from "../../utils/generateID";
 
 function ChatWindow({ socket }: ChatWindowProps) {
   const {
-    chatState: { name, room, joinedUsername, messages },
+    chatState: { name, id, room, roomId, joinedUsername, messages },
     setChatState,
   } = useChatContext();
   const [isTyping, setIsTyping] = useState(false);
@@ -45,9 +45,12 @@ function ChatWindow({ socket }: ChatWindowProps) {
 
   const handleSend = async ({ message }: MessageFormData) => {
     const newMessage: Message = {
+      id: generateID(),
       author: name,
+      authorId: id,
       createdAt: Date.now(),
       room,
+      roomId,
       text: message,
       type: getMessageType(message),
     };
@@ -88,22 +91,22 @@ function ChatWindow({ socket }: ChatWindowProps) {
   );
 
   const onReceiveUserJoinedSuccess = useCallback(
-    ({ name: joinedUsername, room }: JoinChatFormData) => {
-      if (joinedUsername !== name) {
-        setChatState((prevState) => ({ ...prevState, joinedUsername }));
-        socket.emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, room });
+    ({ name: joinedUsername, id: joinedUserId, room }: JoinChatResponse) => {
+      if (joinedUserId !== id) {
+        setChatState((prevState) => ({ ...prevState, joinedUsername, joinedUserId }));
+        socket.emit(SOCKET_ACTION.RECEIVE_USER_JOINED, { name, id, room });
       }
     },
-    [name, socket, setChatState]
+    [id, setChatState, socket, name]
   );
 
   const onSendUserJoinedSuccess = useCallback(
-    ({ name: joinedUsername }: JoinChatFormData) => {
-      if (joinedUsername !== name) {
-        setChatState((prevState) => ({ ...prevState, joinedUsername }));
+    ({ name: joinedUsername, id: joinedUserId }: JoinChatResponse) => {
+      if (joinedUserId !== id) {
+        setChatState((prevState) => ({ ...prevState, joinedUsername, joinedUserId }));
       }
     },
-    [name, setChatState]
+    [id, setChatState]
   );
 
   const onUserTypingSuccessHandler = useCallback(
@@ -134,8 +137,8 @@ function ChatWindow({ socket }: ChatWindowProps) {
         {messages.map((message) => (
           <DisplayMessage
             message={message}
-            own={message.author === name}
-            key={message.createdAt}
+            own={message.authorId === id}
+            key={message.id}
           />
         ))}
       </ChatBody>

@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { SOCKET_ACTION } from "../../utils/socketActions";
-import { JoinChatFormData } from "../JoinChatForm/types";
-import { ReceiveUserJoinedSuccessHandler } from "./types";
+import { JoinChatResponse, ReceiveUserJoinedSuccessHandler } from "./types";
 
 function useReceiveUserJoined(
   socket: Socket,
@@ -14,9 +13,9 @@ function useReceiveUserJoined(
 
     socket.on(
       SOCKET_ACTION.RECEIVE_USER_JOINED,
-      ({ name: joinedUserName, room }: JoinChatFormData) => {
+      ({ name, id, room }: JoinChatResponse) => {
         if (!ignore) {
-          onSuccess?.({ name: joinedUserName, room });
+          onSuccess?.({ name, id, room });
         }
       }
     );
