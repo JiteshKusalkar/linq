@@ -14,7 +14,7 @@ function useMessageFunctions() {
         case MessageType.NICK:
           setChatState((prevState) => ({
             ...prevState,
-            joinedUsername: message.author,
+            joinedUsername: hasReceived ? message.author : joinedUsername,
           }));
 
           break;
