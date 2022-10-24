@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { connect } from "socket.io-client";
 import ChatWindow from "../../components/ChatWindow";
 import JoinChatForm from "../../components/JoinChatForm";
@@ -12,8 +12,6 @@ function Chat() {
   const [hasJoinedChat, setHasJoinedChat] = useState(false);
   const { setChatState } = useChatContext();
 
-  const memoisedSocket = useMemo(() => socket, []);
-
   const handleJoinChat = (name: string, room: string) => {
     setChatState((prevState) => ({ ...prevState, name, room }));
 
@@ -26,7 +24,7 @@ function Chat() {
   };
 
   return hasJoinedChat ? (
-    <ChatWindow socket={memoisedSocket} />
+    <ChatWindow socket={socket} />
   ) : (
     <JoinChatForm onJoinChat={handleJoinChat} />
   );
