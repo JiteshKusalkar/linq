@@ -29,8 +29,12 @@ To start the app:
 - run `yarn install` followed by `yarn start` on `/client` directory
 
 ## Using the app
-Run the chat app on two different tabs. Enter name and room to begin the chat. **Please make sure the room name should be same to chat with the other person.**
 
+### Running the app
+Run the chat app on two different tabs. Enter name and room to begin the chat. **Please make sure the room name should be same while chatting with the other person.**
+
+### Testing the client app
+To run the client test suite, run `yarn test` on root of `/client`.
 
 ## Features
 
